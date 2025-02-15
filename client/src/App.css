@@ -1,0 +1,6 @@
+.App {
+    min-height: 100vh;
+    display: flex;
+    background: linear-gradient(to right top, #65d7e7, #5386ed);
+    color: black;
+}
