@@ -38,4 +38,20 @@ module.exports = {
       next(error);
     }
   }),
+
+  // @desc fetch all messages
+  // GET /api/v1/message/:chatId
+  // @access Private
+  fetchAllMessages: asyncHandler(async (req, res, next) => {
+    try {
+      const messages = await Message.find({ chat: req.params.chatId })
+        .populate("sender", "name pic email")
+        .populate("chat");
+
+      res.status(200).json(messages);
+    } catch (error) {
+      res.status(400);
+      throw new Error(error.message);
+    }
+  }),
 };
