@@ -112,7 +112,7 @@ module.exports = {
   }),
 
   // @desc rename group chat
-  // PUT /api/v1/chat/rename
+  // PATCH /api/v1/chat/rename
   // @access Private
   renameGroup: asyncHandler(async (req, res, next) => {
     const { chatId, chatName } = req.body;
@@ -131,6 +131,60 @@ module.exports = {
       return next({ status: 404, message: "Chat not found" });
     } else {
       res.status(200).json(updatedChat);
+    }
+  }),
+
+  // @desc add user to group chat
+  // PATCH /api/v1/chat/groupadd
+  // @access Private
+  addtoGroup: asyncHandler(async (req, res, next) => {
+    const { chatId, userId } = req.body;
+
+    const added = Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $push: { users: userId },
+      },
+      { new: true }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!added) {
+      return next({ status: 404, message: "Chat not found" });
+    } else {
+      res.status(201).json({
+        success: true,
+        message: "user added",
+        data: added,
+      });
+    }
+  }),
+
+  // @desc remove from group
+  // PATCH /api/chat/groupremove
+  // @access Private
+  removeFromGroup: asyncHandler(async (req, res, next) => {
+    const { chatId, userId } = req.body;
+
+    const remove = Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $pull: { users: userId },
+      },
+      { new: true }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!remove) {
+      return next({ status: 404, message: "Chat not found" });
+    } else {
+      res.status(201).json({
+        success: true,
+        message: "User removed",
+        data: remove,
+      });
     }
   }),
 };
