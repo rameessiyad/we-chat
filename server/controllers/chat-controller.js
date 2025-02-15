@@ -110,4 +110,27 @@ module.exports = {
       throw new Error(error.message);
     }
   }),
+
+  // @desc rename group chat
+  // PUT /api/v1/chat/rename
+  // @access Private
+  renameGroup: asyncHandler(async (req, res, next) => {
+    const { chatId, chatName } = req.body;
+
+    const updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        chatName,
+      },
+      { new: true }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!updatedChat) {
+      return next({ status: 404, message: "Chat not found" });
+    } else {
+      res.status(200).json(updatedChat);
+    }
+  }),
 };
