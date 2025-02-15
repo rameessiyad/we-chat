@@ -24,7 +24,19 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   connectDB();
   console.log(`server running at port : ${PORT}`);
+});
+
+// socket.io
+const io = require("socket.io")(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: "http://localhost:5173",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("socket.io connected");
 });
