@@ -6,20 +6,16 @@ module.exports = {
   // @desc Register a user
   // @route POST /api/users
   // @access Public
-  registerUser: asyncHandler(async (req, res) => {
+  registerUser: asyncHandler(async (req, res, next) => {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      res.status(400);
-      throw new Error("Please enter all the fields");
-    }
+    if (!name || !email || !password)
+      return next({ status: 400, message: "Please add all fields" });
 
     const userExists = await User.findOne({ email });
 
-    if (userExists) {
-      res.status(400);
-      throw new Error("User already exists");
-    }
+    if (userExists)
+      return next({ status: 400, message: "User already exists" });
 
     const user = await User.create({
       name,
@@ -47,7 +43,7 @@ module.exports = {
   // @desc Login a user
   // @route POST /api/users/login
   // @access Public
-  loginUser: asyncHandler(async (req, res) => {
+  loginUser: asyncHandler(async (req, res, next) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
@@ -60,8 +56,29 @@ module.exports = {
         token: generateToken(user._id),
       });
     } else {
-      res.status(401);
-      throw new Error("Invalid email or password");
+      return next({ status: 401, message: "Invalid email or password" });
     }
+  }),
+
+  // @desc get all users
+  // @route GET /api/users?search=ramees
+  // @access Public
+  getAllUsers: asyncHandler(async (req, res, next) => {
+    const keyword = req.query.search
+      ? {
+          $or: [
+            { name: { $regex: req.query.search, $options: "i" } },
+            { email: { $regex: req.query.search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const users = (await User.find(keyword)).find({
+      _id: { $ne: req.user._id },
+    });
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
   }),
 };
