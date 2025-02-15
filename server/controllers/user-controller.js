@@ -61,7 +61,7 @@ module.exports = {
   }),
 
   // @desc get all users
-  // @route GET /api/users?search=ramees
+  // @route GET /api/user?search=ramees
   // @access Public
   getAllUsers: asyncHandler(async (req, res, next) => {
     const keyword = req.query.search
@@ -73,12 +73,8 @@ module.exports = {
         }
       : {};
 
-    const users = (await User.find(keyword)).find({
-      _id: { $ne: req.user._id },
-    });
-    res.status(200).json({
-      success: true,
-      data: users,
-    });
+    const users = await User.find(keyword).find({ _id: { $ne: req.user._id } });
+
+    res.send(users);
   }),
 };
