@@ -10,8 +10,16 @@ import {
 } from "@chakra-ui/react";
 import Login from "../components/auth/Login";
 import Signup from "../components/auth/Signup";
+import { useEffect } from "react";
 
 const HomePage = () => {
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+
+    if (user) {
+      window.location.href = "/chat";
+    }
+  }, []);
   return (
     <Container maxW="xl" centerContent>
       <Box
