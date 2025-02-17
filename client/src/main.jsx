@@ -6,11 +6,11 @@ import App from "./App.jsx";
 import ChatProvider from "./context/ChatProvider.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <ChatProvider>
-    <BrowserRouter>
+  <BrowserRouter>
+    <ChatProvider>
       <ChakraProvider>
         <App />
       </ChakraProvider>
-    </BrowserRouter>
-  </ChatProvider>
+    </ChatProvider>
+  </BrowserRouter>
 );
