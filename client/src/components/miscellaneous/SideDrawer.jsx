@@ -4,6 +4,10 @@ import {
   Avatar,
   Box,
   Button,
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
   HStack,
   Menu,
   MenuButton,
@@ -14,9 +18,10 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { FaSearch, FaBell, FaChevronDown } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useDisclosure } from "@chakra-ui/react";
 import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
-import { useNavigate } from "react-router-dom";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -27,6 +32,8 @@ const SideDrawer = () => {
   const navigate = useNavigate();
 
   const { user } = ChatState();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
@@ -45,7 +52,7 @@ const SideDrawer = () => {
         borderWidth="5px"
       >
         <Tooltip hasArrow placement="bottom" label="Search Users to chat">
-          <Button variant="ghost">
+          <Button variant="ghost" onClick={onOpen}>
             <FaSearch size={20} />
             <Text display={{ base: "none", md: "flex" }} px={4}>
               Search User
@@ -86,6 +93,13 @@ const SideDrawer = () => {
           </Menu>
         </div>
       </Box>
+
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };
