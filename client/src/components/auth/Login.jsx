@@ -11,12 +11,15 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import { baseUrl } from "../../constants";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [show, setShow] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const toast = useToast();
 
@@ -57,7 +60,7 @@ const Login = () => {
 
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-      window.location.href = "/chats";
+      navigate("/chat");
     } catch (error) {
       toast({
         title: "Error Occured!",
