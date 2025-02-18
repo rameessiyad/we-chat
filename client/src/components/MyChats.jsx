@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { ChatState } from "../context/ChatProvider";
@@ -27,26 +28,16 @@ const MyChats = () => {
       setChats(data);
       // if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
 
-      setSelectedChats(data);
+      // setSelectedChats(data);
     } catch (error) {
-      toast({
-        title: "Error Occured!",
-        description: "Failed to Load the chats",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-left",
-      });
+      console.log(error);
     }
   };
 
   useEffect(() => {
     setLoggedInUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  console.log(loggedInUser);
 
   return (
     <Box
