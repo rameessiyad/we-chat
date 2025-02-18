@@ -43,7 +43,10 @@ module.exports = {
           "-password"
         );
 
-        res.status(200).send(fullChat);
+        res.status(200).json({
+          success: true,
+          data: fullChat,
+        });
       } catch (error) {
         res.status(400);
         throw new Error(error.message);
