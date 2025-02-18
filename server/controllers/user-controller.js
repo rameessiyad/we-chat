@@ -7,7 +7,7 @@ module.exports = {
   // @route POST /api/users
   // @access Public
   registerUser: asyncHandler(async (req, res, next) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, pic } = req.body;
 
     if (!name || !email || !password)
       return next({ status: 400, message: "Please add all fields" });
@@ -21,6 +21,7 @@ module.exports = {
       name,
       email,
       password,
+      pic,
     });
 
     if (user) {
