@@ -12,8 +12,7 @@ import GroupChatModal from "./miscellaneous/GroupChatModal";
 
 const MyChats = () => {
   const [loggedInUser, setLoggedInUser] = useState();
-  const { user, selectedChats, setSelectedChats, chats, setChats } =
-    ChatState();
+  const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
 
   const toast = useToast();
 
@@ -27,13 +26,15 @@ const MyChats = () => {
       const { data } = await axios.get(`${baseUrl}/api/v1/chat`, config);
 
       setChats(data);
-      // if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
 
-      // setSelectedChats(data);
+      setSelectedChat(data);
     } catch (error) {
       console.log(error);
     }
   };
+
+  console.log(selectedChat);
 
   useEffect(() => {
     setLoggedInUser(JSON.parse(localStorage.getItem("userInfo")));
@@ -42,7 +43,7 @@ const MyChats = () => {
 
   return (
     <Box
-      display={{ base: selectedChats ? "none" : "flex", md: "flex" }}
+      display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
       p={3}
@@ -86,10 +87,10 @@ const MyChats = () => {
           <Stack overflowY="scroll">
             {chats.map((chat) => (
               <Box
-                onClick={() => selectedChats(chat)}
+                onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChats === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChats === chat ? "white" : "black"}
+                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
+                color={selectedChat === chat ? "white" : "black"}
                 px={3}
                 py={2}
                 borderRadius="lg"

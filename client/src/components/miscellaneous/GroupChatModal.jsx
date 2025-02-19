@@ -14,7 +14,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import axios from "axios";
 import { ChatState } from "../../context/ChatProvider";
+import { baseUrl } from "../../constants";
 
 const GroupChatModal = ({ children }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -29,7 +31,40 @@ const GroupChatModal = ({ children }) => {
 
   const { user, chats, setChats } = ChatState();
 
-  const handleSearch = async (query) => {};
+  const handleSearch = async (query) => {
+    setSearch(query);
+    if (!query) return;
+
+    try {
+      setLoading(true);
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `${baseUrl}/api/v1/user?search=${search}`,
+        config
+      );
+
+      setLoading(false);
+      setSearchResult(data);
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: "Failed to Load the Search Results",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+  };
+
+  const handleSubmit = async () => {};
+
   return (
     <>
       <span onClick={onOpen}>{children}</span>
@@ -65,14 +100,15 @@ const GroupChatModal = ({ children }) => {
               />
             </FormControl>
             {/* selected users */}
-            {/* render searched users */}
+            {/* {loading ? <div>loading...</div>: 
+                searchResult?.slice(0, 4).map((user) => )
+            } */}
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
+            <Button colorScheme="blue" onClick={handleSubmit}>
+              Create Group
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
