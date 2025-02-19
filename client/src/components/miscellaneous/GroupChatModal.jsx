@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import {
+  Box,
   Button,
   FormControl,
   Input,
@@ -17,6 +19,8 @@ import { useState } from "react";
 import axios from "axios";
 import { ChatState } from "../../context/ChatProvider";
 import { baseUrl } from "../../constants";
+import UserListItem from "../userAvatar/UserListItem";
+import UserBadgeItem from "../userAvatar/UserBadgeItem";
 
 const GroupChatModal = ({ children }) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -54,7 +58,7 @@ const GroupChatModal = ({ children }) => {
     } catch (error) {
       toast({
         title: "Error Occured!",
-        description: "Failed to Load the Search Results",
+        description: error.response.data.message,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -64,6 +68,28 @@ const GroupChatModal = ({ children }) => {
   };
 
   const handleSubmit = async () => {};
+
+  const handleGroup = (userToAdd) => {
+    if (selectedUsers.includes(userToAdd)) {
+      toast({
+        title: "User already added",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+
+      return;
+    }
+
+    setSelectedUsers([...selectedUsers, userToAdd]);
+  };
+
+  const handleDelete = (userToDelete) => {
+    setSelectedUsers(
+      selectedUsers.filter((user) => user._id !== userToDelete._id)
+    );
+  };
 
   return (
     <>
@@ -99,10 +125,29 @@ const GroupChatModal = ({ children }) => {
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </FormControl>
-            {/* selected users */}
-            {/* {loading ? <div>loading...</div>: 
-                searchResult?.slice(0, 4).map((user) => )
-            } */}
+            <Box width="100%" display="flex" flexWrap="wrap">
+              {selectedUsers.map((user) => (
+                <UserBadgeItem
+                  key={user._id}
+                  user={user}
+                  handleFunction={() => handleDelete(user)}
+                />
+              ))}
+            </Box>
+
+            {loading ? (
+              <div>loading...</div>
+            ) : (
+              searchResult
+                ?.slice(0, 4)
+                .map((user) => (
+                  <UserListItem
+                    key={user._id}
+                    user={user}
+                    handleFunction={() => handleGroup(user)}
+                  />
+                ))
+            )}
           </ModalBody>
 
           <ModalFooter>
